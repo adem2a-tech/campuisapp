@@ -1,0 +1,898 @@
+Tu es un développeur senior full-stack spécialisé dans la création de SaaS modernes, professionnels et scalables.
+
+Je veux que tu développes une application SaaS appelée **CAMPUS**, destinée aux thérapeutes, praticiens en thérapie manuelle, ventousothérapie, massage, mobilité et pratiques corporelles associées.
+
+L’objectif est de créer une plateforme extrêmement propre, moderne et intuitive qui centralise toute la gestion d’un cabinet et permet au praticien de suivre ses clients entre les séances.
+
+IMPORTANT :
+Ne crée pas une simple landing page ou une maquette statique. Je veux une véritable application fonctionnelle avec navigation, authentification, base de données, CRUD, rôles utilisateurs, données persistantes et architecture prête à évoluer.
+
+## 1. POSITIONNEMENT
+
+CAMPUS doit être un SaaS professionnel premium.
+
+Le produit doit permettre au praticien de :
+
+* gérer son cabinet
+* gérer son agenda
+* gérer ses rendez-vous
+* gérer ses clients
+* consulter l’historique des séances
+* documenter chaque séance
+* utiliser une cartographie corporelle 2D
+* consulter une bibliothèque anatomique
+* créer des exercices
+* créer des programmes personnalisés
+* envoyer ces programmes aux clients
+* suivre la réalisation des exercices
+* suivre les ressentis du client
+* gérer ses factures
+* consulter ses statistiques
+
+Le client dispose d’un espace beaucoup plus simple permettant de :
+
+* prendre rendez-vous
+* consulter ses rendez-vous
+* consulter son programme
+* voir ses exercices
+* déclarer ses exercices réalisés
+* renseigner ses ressentis
+* recevoir des notifications
+* consulter son historique accessible
+
+## 2. RÈGLE ABSOLUE
+
+CAMPUS n’est PAS un logiciel médical.
+
+L’application ne doit jamais :
+
+* établir de diagnostic médical
+* diagnostiquer une pathologie
+* prescrire un traitement
+* générer une ordonnance
+* prendre automatiquement une décision thérapeutique
+* présenter une recommandation automatique comme une décision médicale
+
+Le praticien reste toujours décisionnaire.
+
+L’application sert à documenter, organiser, visualiser et accompagner.
+
+## 3. STACK TECHNIQUE
+
+Utilise une stack moderne et robuste.
+
+Frontend :
+
+* Next.js
+* React
+* TypeScript
+* Tailwind CSS
+* composants UI modernes
+* responsive design
+
+Backend :
+
+* architecture propre et scalable
+* API sécurisée
+* PostgreSQL
+
+Authentification :
+
+* système de connexion sécurisé
+* rôles : practitioner / client / admin
+* gestion des sessions
+* protection des routes
+
+Utilise Prisma ou un ORM équivalent pour la base de données.
+
+L’architecture doit être pensée comme un véritable SaaS multi-tenant.
+
+Un praticien ne doit jamais pouvoir accéder aux données d’un autre praticien.
+
+## 4. DESIGN
+
+Je veux une interface :
+
+* premium
+* minimaliste
+* moderne
+* professionnelle
+* très propre
+* rassurante
+* légèrement technologique
+* anatomique sans être médicale
+* élégante
+* rapide
+
+NE PAS faire :
+
+* dashboard surchargé
+* grosses animations inutiles
+* esthétique hospitalière
+* design ésotérique
+* effets 3D partout
+* couleurs agressives
+* interface compliquée
+
+Inspiration générale :
+Apple + Linear + Notion + logiciels SaaS premium.
+
+L’interface doit donner immédiatement l’impression d’un produit professionnel pouvant être vendu entre 39 € et 89 €/mois.
+
+## 5. STRUCTURE PRATICIEN
+
+Créer une sidebar desktop avec :
+
+Dashboard
+Agenda
+Clients
+Séances
+Anatomie
+Exercices
+Programmes
+Facturation
+Statistiques
+Paramètres
+
+Sur mobile, transformer la navigation en navigation adaptée au mobile.
+
+## 6. DASHBOARD
+
+Créer un dashboard très propre.
+
+Afficher :
+
+Aujourd’hui
+
+* nombre de rendez-vous
+* prochain rendez-vous
+* nouveaux clients
+* programmes à envoyer
+* programmes arrivant à échéance
+* factures en attente
+* retours clients
+
+Statistiques :
+
+* clients actifs
+* séances du mois
+* chiffre d’affaires
+* taux de présence
+* programmes actifs
+
+Ajouter des boutons rapides :
+
+* Nouveau client
+* Nouvelle séance
+* Nouveau programme
+
+Et des raccourcis :
+Agenda
+Anatomie
+
+## 7. AGENDA
+
+Créer un véritable agenda.
+
+Vues :
+
+* jour
+* semaine
+* mois
+
+Fonctionnalités :
+
+* créer rendez-vous
+* modifier rendez-vous
+* déplacer rendez-vous
+* annuler
+* confirmer
+* répétition
+* durée
+* type de séance
+* client
+* notes internes
+
+Le praticien doit pouvoir définir :
+
+* prestations
+* durée
+* prix
+* disponibilités
+* jours travaillés
+* horaires
+* délai minimum de réservation
+* délai d’annulation
+
+Créer également une page de réservation client.
+
+Le client choisit :
+
+1. prestation
+2. date
+3. heure
+4. confirmation
+
+Prévoir la structure nécessaire pour intégrer plus tard :
+
+* Google Calendar
+* Apple Calendar
+* Outlook
+
+## 8. CLIENTS
+
+Créer une page Clients avec :
+
+* recherche
+* filtres
+* liste
+* nombre de séances
+* dernière séance
+* prochaine séance
+* programme actif
+
+Créer une fiche client complète.
+
+Informations :
+
+* nom
+* prénom
+* date de naissance si nécessaire
+* téléphone
+* email
+* coordonnées
+* notes administratives
+
+Résumé :
+
+* première séance
+* nombre de séances
+* dernière séance
+* prochaine séance
+* programmes actifs
+
+Actions :
+
+Nouvelle séance
+Historique
+Cartographie
+Programmes
+Exercices
+Facturation
+
+## 9. HISTORIQUE CLIENT
+
+Créer une timeline.
+
+Chaque séance doit afficher :
+
+* date
+* durée
+* zones travaillées
+* techniques documentées
+* observations
+* programme envoyé
+* évolution renseignée
+
+Permettre de comparer plusieurs séances.
+
+Exemple :
+
+Séance 1
+vs
+Séance 4
+vs
+Séance 8
+
+Avec :
+
+* ressenti déclaré
+* zones principales
+* programme
+* réalisation
+
+## 10. NOUVELLE SÉANCE
+
+Créer un parcours extrêmement rapide.
+
+Étape 1 — Avant séance
+
+* ressenti général
+* zones signalées
+* intensité du ressenti
+* mobilité perçue
+* objectifs déclarés
+* commentaires
+
+Étape 2 — Travail réalisé
+
+* zones corporelles
+* techniques
+* durée
+* observations
+
+Étape 3 — Après séance
+
+* ressenti post-séance
+* observations
+* recommandations rédigées par le praticien
+* programme interséance
+
+La séance doit être enregistrée dans l’historique du client.
+
+## 11. CARTOGRAPHIE CORPORELLE 2D
+
+C’est une fonctionnalité centrale.
+
+Créer un corps humain interactif avec :
+
+* vue antérieure
+* vue postérieure
+* vue latérale droite
+* vue latérale gauche
+
+Le praticien peut cliquer sur une zone.
+
+Une zone sélectionnée peut recevoir :
+
+* sélection
+* couleur
+* annotation
+* note
+* technique
+* intensité
+* durée
+
+Exemple :
+
+Trapèze supérieur droit
+
+Technique :
+Ventouses
+
+Durée :
+8 min
+
+Observation :
+Tension importante
+
+Toutes ces informations doivent être automatiquement liées à la séance actuelle.
+
+IMPORTANT :
+La cartographie doit être conçue de manière à pouvoir évoluer plus tard vers des couches anatomiques avancées.
+
+## 12. ANATOMIE
+
+Créer une bibliothèque anatomique.
+
+Recherche par :
+
+* nom
+* région
+* structure
+* muscle
+* articulation
+* fascia
+* repère
+
+Chaque élément peut contenir :
+
+* illustration
+* nom
+* localisation
+* description
+* vue
+* structures associées
+* références
+
+Créer une interface de consultation très visuelle.
+
+Préparer l’architecture pour ajouter plus tard :
+
+* couches anatomiques
+* muscles
+* articulations
+* fascias
+* modèle 3D
+
+Ne pas implémenter une 3D complexe dans le MVP.
+
+## 13. EXERCICES
+
+Créer une bibliothèque d’exercices.
+
+Catégories :
+
+* mobilité
+* respiration
+* étirement
+* renforcement
+* récupération
+* relaxation
+* posture
+* mouvements articulaires
+
+Chaque exercice contient :
+
+* nom
+* objectif fonctionnel
+* vidéo
+* illustration
+* consignes
+* durée
+* répétitions
+* fréquence
+* précautions
+
+Le praticien peut également créer son propre exercice avec :
+
+* nom
+* description
+* vidéo
+* photo
+* répétitions
+* durée
+* fréquence
+* consignes
+* commentaires
+
+## 14. PROGRAMMES
+
+Créer un système de création de programme.
+
+Le praticien sélectionne :
+
+* client
+* durée
+* exercices
+* fréquence
+* objectifs
+* consignes
+* message personnalisé
+
+Exemple :
+
+Programme 7 jours
+
+Exercice A
+3 × 10 répétitions
+
+Exercice B
+30 secondes × 3
+
+Exercice C
+5 minutes/jour
+
+Une fois envoyé, le programme apparaît automatiquement dans l’espace client.
+
+## 15. ESPACE CLIENT
+
+Créer un espace client beaucoup plus simple.
+
+Navigation :
+
+Accueil
+Rendez-vous
+Mon programme
+Mes exercices
+Mon suivi
+Mes documents
+Mon profil
+
+Le client voit :
+
+« Mon programme »
+
+Aujourd’hui :
+
+* exercice 1
+* exercice 2
+* exercice 3
+
+Pour chaque exercice :
+
+J’ai réalisé cet exercice
+
+Options :
+
+* réalisé
+* partiellement réalisé
+* non réalisé
+
+Le client peut renseigner :
+
+* ressenti
+* gêne
+* mobilité perçue
+* fatigue
+* satisfaction
+* commentaire
+
+## 16. SUIVI
+
+Créer un système permettant au praticien de voir les retours du client.
+
+Exemple :
+
+Programme : 82 % réalisé
+
+Exercice A : 95 %
+Exercice B : 60 %
+Exercice C : 90 %
+
+Créer des graphiques simples et lisibles.
+
+Le but est d’aider le praticien à préparer la prochaine séance.
+
+## 17. FACTURATION
+
+Créer une section facturation.
+
+Fonctions :
+
+* créer facture
+* numéro automatique
+* client
+* prestation
+* montant
+* date
+* statut
+* paiement
+* téléchargement
+* envoi
+
+Statuts :
+
+* brouillon
+* envoyée
+* payée
+* impayée
+* annulée
+
+Préparer l’architecture pour une intégration Stripe ultérieure.
+
+## 18. ABONNEMENT
+
+Créer une page d’abonnement.
+
+Offres :
+
+CAMPUS ESSENTIAL
+39 €/mois
+
+CAMPUS PRO
+59 €/mois
+
+CAMPUS EXPERT
+89 €/mois
+
+Le client final ne paie pas pour accéder au programme créé par son praticien.
+
+Créer une architecture permettant d’intégrer Stripe Billing ultérieurement.
+
+## 19. NOTIFICATIONS
+
+Créer un système de notifications.
+
+Notifications possibles :
+
+* rendez-vous
+* rappel
+* nouveau programme
+* nouvel exercice
+* rappel d’exercice
+* questionnaire
+* modification de rendez-vous
+
+Préparer une architecture permettant plus tard les notifications push.
+
+## 20. ADMIN
+
+Créer un back-office séparé accessible uniquement aux administrateurs.
+
+Sections :
+
+Dashboard
+Utilisateurs
+Praticiens
+Clients
+Abonnements
+Contenus
+Exercices
+Anatomie
+Support
+Statistiques
+Paramètres
+
+L’administrateur peut :
+
+* voir les utilisateurs
+* suspendre un compte
+* gérer les abonnements
+* gérer les contenus
+* gérer les exercices
+* gérer la bibliothèque anatomique
+* consulter les statistiques
+* gérer les tickets support
+
+Statistiques :
+
+* utilisateurs
+* activité
+* rétention
+* conversion
+* MRR
+* ARR
+
+## 21. BASE DE DONNÉES
+
+Créer une vraie structure relationnelle.
+
+Minimum :
+
+User
+Practitioner
+Client
+Cabinet
+Appointment
+Service
+Session
+BodyZone
+SessionZone
+Technique
+Observation
+Exercise
+ExerciseCompletion
+Program
+ProgramExercise
+ClientFeedback
+Invoice
+Subscription
+Notification
+AnatomyStructure
+Consent
+AuditLog
+
+Relations correctement définies.
+
+Chaque donnée sensible doit être isolée par tenant/praticien.
+
+## 22. SÉCURITÉ
+
+Prendre en compte dès le départ :
+
+* authentification sécurisée
+* autorisation par rôle
+* isolation des tenants
+* validation serveur
+* validation client
+* protection API
+* sessions sécurisées
+* chiffrement des communications
+* logs
+* audit trail
+* sauvegardes
+* suppression de compte
+* export des données
+* gestion des consentements
+
+Ne jamais exposer de données privées côté client.
+
+## 23. RGPD
+
+Prévoir une architecture compatible avec les exigences RGPD.
+
+Créer des mécanismes distincts pour :
+
+* création de compte
+* traitement des données
+* communication
+* photographie
+* partage de documents
+* notifications
+
+Prévoir :
+
+* export des données
+* suppression
+* consentements
+* politique de conservation
+* journalisation
+
+Ne pas considérer qu’une seule checkbox suffit pour tous les consentements.
+
+## 24. UX
+
+La règle principale :
+
+Le praticien doit pouvoir faire le parcours suivant en quelques secondes :
+
+Agenda
+→ Client
+→ Nouvelle séance
+→ Sélection des zones
+→ Documentation
+→ Exercices
+→ Programme
+→ Envoi
+
+L’application doit minimiser les clics.
+
+La règle d’or du produit :
+
+Le praticien doit pouvoir répondre rapidement à :
+
+« Qu’ai-je fait avec ce client ? »
+
+« Où avons-nous travaillé ? »
+
+« Que doit-il faire jusqu’à la prochaine séance ? »
+
+## 25. RESPONSIVE
+
+L’application doit fonctionner parfaitement sur :
+
+* desktop
+* tablette
+* mobile
+
+Priorité :
+
+* iPhone
+* iPad
+* navigateur Mac/PC
+
+Le dashboard desktop peut utiliser une sidebar.
+
+Sur mobile :
+
+* bottom navigation ou navigation adaptée
+* cartes compactes
+* boutons accessibles
+* formulaires simples
+
+## 26. DONNÉES DE DÉMONSTRATION
+
+Créer un mode développement avec des données réalistes :
+
+3 praticiens
+10 clients
+plusieurs rendez-vous
+plusieurs séances
+plusieurs exercices
+plusieurs programmes
+factures
+notifications
+
+Cela permettra de tester immédiatement l’application.
+
+## 27. ARCHITECTURE ÉVOLUTIVE
+
+Ne code pas quelque chose de jetable.
+
+Le projet doit pouvoir évoluer vers :
+
+* plusieurs praticiens
+* plusieurs cabinets
+* centres
+* réseaux
+* licences professionnelles
+* API
+* marketplace
+* anatomie 3D
+* IA d’assistance
+
+Mais ne développe PAS ces fonctionnalités avancées maintenant.
+
+## 28. MVP
+
+Le MVP doit contenir :
+
+* inscription
+* connexion
+* profils
+* dashboard
+* agenda
+* rendez-vous
+* clients
+* dossier client
+* historique
+* séances
+* cartographie corporelle 2D
+* zones travaillées
+* exercices
+* programmes
+* espace client
+* notifications
+* facturation
+* abonnement
+* back-office
+* sécurité
+* RGPD
+
+NE PAS développer maintenant :
+
+* IA médicale
+* diagnostic automatique
+* réalité augmentée
+* anatomie 3D ultra détaillée
+* analyse biomécanique automatique
+* recommandations thérapeutiques automatiques
+
+## 29. MÉTHODE DE TRAVAIL
+
+Avant de coder :
+
+1. Analyse toute l’architecture.
+2. Définis la structure du projet.
+3. Définis le schéma de base de données.
+4. Définis les rôles et permissions.
+5. Définis les routes.
+6. Définis les composants réutilisables.
+7. Puis commence l’implémentation.
+
+Ne crée pas tout dans un seul fichier.
+
+Utilise une architecture propre et modulaire.
+
+Créer des composants réutilisables :
+
+* Button
+* Modal
+* Input
+* Select
+* Card
+* Badge
+* Table
+* Calendar
+* ClientCard
+* SessionCard
+* ExerciseCard
+* ProgramCard
+* Notification
+* BodyMap
+
+## 30. PRIORITÉ ABSOLUE
+
+Je préfère une application avec 15 fonctionnalités parfaitement réalisées plutôt qu’une application avec 50 fonctionnalités mal terminées.
+
+Chaque fonctionnalité doit être réellement fonctionnelle.
+
+Pas de boutons fictifs.
+
+Pas de pages vides.
+
+Pas de lorem ipsum.
+
+Pas de faux dashboards statiques.
+
+Si une intégration externe n’est pas encore configurée, crée une architecture propre et un état de démonstration réaliste, sans prétendre que l’intégration fonctionne.
+
+## 31. FINAL
+
+Commence par créer le projet CAMPUS avec une architecture professionnelle.
+
+Construis d’abord :
+
+1. système d’authentification
+2. layout principal
+3. dashboard
+4. agenda
+5. clients
+6. fiche client
+7. séance
+8. cartographie corporelle 2D
+9. exercices
+10. programmes
+11. espace client
+12. facturation
+13. paramètres
+14. admin
+
+À chaque étape, vérifie que le code fonctionne et que les routes sont cohérentes.
+
+L’objectif final est un SaaS que l’on pourrait réellement présenter à des thérapeutes professionnels comme un produit commercial.
+
+Ne surcharge pas le design.
+
+**Simple. Premium. Rapide. Professionnel.**

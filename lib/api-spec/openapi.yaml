@@ -3,13 +3,22 @@ info:
   # Do not change the title, if the title changes, the import paths will be broken
   title: Api
   version: 0.1.0
-  description: API specification
+  description: CAMPUS practitioner workspace API
 servers:
   - url: /api
     description: Base API path
 tags:
   - name: health
     description: Health operations
+  - name: dashboard
+  - name: clients
+  - name: appointments
+  - name: sessions
+  - name: exercises
+  - name: programs
+  - name: anatomy
+  - name: notifications
+  - name: billing
 paths:
   /healthz:
     get:
@@ -24,7 +33,497 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/HealthStatus"
+  /dashboard/summary:
+    get:
+      operationId: getDashboardSummary
+      tags: [dashboard]
+      summary: Get practitioner dashboard summary
+      responses:
+        "200":
+          description: Dashboard summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DashboardSummary"
+  /dashboard/activity:
+    get:
+      operationId: getDashboardActivity
+      tags: [dashboard]
+      summary: Get recent practitioner activity
+      responses:
+        "200":
+          description: Recent activity
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/ActivityItem"
+  /clients:
+    get:
+      operationId: listClients
+      tags: [clients]
+      summary: List clients
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema: { type: string }
+        - name: status
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [active, archived, all]
+            default: active
+      responses:
+        "200":
+          description: Client list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Client"
+    post:
+      operationId: createClient
+      tags: [clients]
+      summary: Create a client
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientInput"
+      responses:
+        "201":
+          description: Created client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+  /clients/{id}:
+    get:
+      operationId: getClient
+      tags: [clients]
+      summary: Get a client dossier
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Client dossier
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ClientDetail"
+        "404":
+          $ref: "#/components/responses/NotFound"
+    patch:
+      operationId: updateClient
+      tags: [clients]
+      summary: Update a client
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ClientUpdate"
+      responses:
+        "200":
+          description: Updated client
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Client"
+    delete:
+      operationId: archiveClient
+      tags: [clients]
+      summary: Archive a client
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Client archived
+  /appointments:
+    get:
+      operationId: listAppointments
+      tags: [appointments]
+      summary: List appointments in a date range
+      parameters:
+        - name: from
+          in: query
+          required: false
+          schema: { type: string, format: date }
+        - name: to
+          in: query
+          required: false
+          schema: { type: string, format: date }
+      responses:
+        "200":
+          description: Appointment list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appointment"
+    post:
+      operationId: createAppointment
+      tags: [appointments]
+      summary: Create an appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentInput"
+      responses:
+        "201":
+          description: Created appointment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+  /appointments/{id}:
+    patch:
+      operationId: updateAppointment
+      tags: [appointments]
+      summary: Update an appointment
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentUpdate"
+      responses:
+        "200":
+          description: Updated appointment
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Appointment"
+    delete:
+      operationId: cancelAppointment
+      tags: [appointments]
+      summary: Cancel an appointment
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Appointment cancelled
+  /sessions:
+    get:
+      operationId: listSessions
+      tags: [sessions]
+      summary: List recorded sessions
+      parameters:
+        - name: clientId
+          in: query
+          required: false
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Session list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Session"
+    post:
+      operationId: createSession
+      tags: [sessions]
+      summary: Record a session
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SessionInput"
+      responses:
+        "201":
+          description: Created session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+  /sessions/{id}:
+    get:
+      operationId: getSession
+      tags: [sessions]
+      summary: Get a recorded session
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+    patch:
+      operationId: updateSession
+      tags: [sessions]
+      summary: Update a recorded session
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SessionUpdate"
+      responses:
+        "200":
+          description: Updated session
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Session"
+  /body-zones:
+    get:
+      operationId: listBodyZones
+      tags: [sessions]
+      summary: List interactive body map zones
+      responses:
+        "200":
+          description: Body zones
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/BodyZone"
+  /exercises:
+    get:
+      operationId: listExercises
+      tags: [exercises]
+      summary: List exercise library
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema: { type: string }
+        - name: category
+          in: query
+          required: false
+          schema:
+            type: string
+            enum: [mobility, breathing, stretching, strengthening, recovery, relaxation, posture]
+      responses:
+        "200":
+          description: Exercise library
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Exercise"
+    post:
+      operationId: createExercise
+      tags: [exercises]
+      summary: Create a practitioner exercise
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExerciseInput"
+      responses:
+        "201":
+          description: Created exercise
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exercise"
+  /exercises/{id}:
+    patch:
+      operationId: updateExercise
+      tags: [exercises]
+      summary: Update an exercise
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ExerciseUpdate"
+      responses:
+        "200":
+          description: Updated exercise
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Exercise"
+    delete:
+      operationId: deleteExercise
+      tags: [exercises]
+      summary: Delete an exercise
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "204":
+          description: Exercise deleted
+  /programs:
+    get:
+      operationId: listPrograms
+      tags: [programs]
+      summary: List client programs
+      responses:
+        "200":
+          description: Program list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Program"
+    post:
+      operationId: createProgram
+      tags: [programs]
+      summary: Create a client program
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProgramInput"
+      responses:
+        "201":
+          description: Created program
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Program"
+  /programs/{id}:
+    patch:
+      operationId: updateProgram
+      tags: [programs]
+      summary: Update a client program
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProgramUpdate"
+      responses:
+        "200":
+          description: Updated program
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Program"
+  /notifications:
+    get:
+      operationId: listNotifications
+      tags: [notifications]
+      summary: List notifications
+      responses:
+        "200":
+          description: Notification list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Notification"
+  /notifications/{id}/read:
+    post:
+      operationId: markNotificationRead
+      tags: [notifications]
+      summary: Mark a notification as read
+      parameters:
+        - $ref: "#/components/parameters/Id"
+      responses:
+        "200":
+          description: Updated notification
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Notification"
+  /invoices:
+    get:
+      operationId: listInvoices
+      tags: [billing]
+      summary: List invoices
+      responses:
+        "200":
+          description: Invoice list
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Invoice"
+    post:
+      operationId: createInvoice
+      tags: [billing]
+      summary: Create an invoice
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/InvoiceInput"
+      responses:
+        "201":
+          description: Created invoice
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Invoice"
+  /subscription:
+    get:
+      operationId: getSubscription
+      tags: [billing]
+      summary: Get current subscription
+      responses:
+        "200":
+          description: Current subscription
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Subscription"
+  /anatomy/structures:
+    get:
+      operationId: listAnatomyStructures
+      tags: [anatomy]
+      summary: List anatomy library structures
+      parameters:
+        - name: search
+          in: query
+          required: false
+          schema: { type: string }
+      responses:
+        "200":
+          description: Anatomy structures
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/AnatomyStructure"
 components:
+  parameters:
+    Id:
+      name: id
+      in: path
+      required: true
+      schema: { type: integer }
+  responses:
+    NotFound:
+      description: Resource not found
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Error"
   schemas:
     HealthStatus:
       type: object
@@ -33,4 +532,314 @@ components:
           type: string
       required:
         - status
+    Error:
+      type: object
+      properties:
+        error: { type: string }
+      required: [error]
+    DashboardSummary:
+      type: object
+      required: [todayAppointments, activeClients, monthlySessions, monthlyRevenue, attendanceRate, activePrograms, unreadNotifications]
+      properties:
+        todayAppointments: { type: integer }
+        nextAppointment: { type: ["string", "null"], format: date-time }
+        activeClients: { type: integer }
+        monthlySessions: { type: integer }
+        monthlyRevenue: { type: number }
+        attendanceRate: { type: number }
+        activePrograms: { type: integer }
+        unreadNotifications: { type: integer }
+        programsToSend: { type: integer }
+        invoicesDue: { type: integer }
+    ActivityItem:
+      type: object
+      required: [id, type, title, detail, createdAt]
+      properties:
+        id: { type: integer }
+        type: { type: string, enum: [appointment, session, program, feedback, invoice] }
+        title: { type: string }
+        detail: { type: string }
+        createdAt: { type: string, format: date-time }
+    Client:
+      type: object
+      required: [id, firstName, lastName, email, status, sessionsCount, lastSessionAt, nextAppointmentAt, activeProgramCount]
+      properties:
+        id: { type: integer }
+        firstName: { type: string }
+        lastName: { type: string }
+        email: { type: string, format: email }
+        phone: { type: ["string", "null"] }
+        birthDate: { type: ["string", "null"], format: date }
+        status: { type: string, enum: [active, archived] }
+        sessionsCount: { type: integer }
+        lastSessionAt: { type: ["string", "null"], format: date-time }
+        nextAppointmentAt: { type: ["string", "null"], format: date-time }
+        activeProgramCount: { type: integer }
+        avatarColor: { type: string }
+    ClientInput:
+      type: object
+      required: [firstName, lastName, email]
+      properties:
+        firstName: { type: string, minLength: 1 }
+        lastName: { type: string, minLength: 1 }
+        email: { type: string, format: email }
+        phone: { type: string }
+        birthDate: { type: string, format: date }
+        notes: { type: string }
+    ClientUpdate:
+      type: object
+      properties:
+        firstName: { type: string, minLength: 1 }
+        lastName: { type: string, minLength: 1 }
+        email: { type: string, format: email }
+        phone: { type: string }
+        birthDate: { type: string, format: date }
+        notes: { type: string }
+        status: { type: string, enum: [active, archived] }
+    ClientDetail:
+      allOf:
+        - $ref: "#/components/schemas/Client"
+        - type: object
+          required: [notes, firstSessionAt, sessions]
+          properties:
+            notes: { type: string }
+            firstSessionAt: { type: ["string", "null"], format: date-time }
+            sessions:
+              type: array
+              items: { $ref: "#/components/schemas/Session" }
+    Appointment:
+      type: object
+      required: [id, clientId, clientName, title, startsAt, endsAt, status, serviceName, price]
+      properties:
+        id: { type: integer }
+        clientId: { type: integer }
+        clientName: { type: string }
+        title: { type: string }
+        serviceName: { type: string }
+        startsAt: { type: string, format: date-time }
+        endsAt: { type: string, format: date-time }
+        status: { type: string, enum: [confirmed, pending, cancelled, completed] }
+        notes: { type: ["string", "null"] }
+        price: { type: number }
+    AppointmentInput:
+      type: object
+      required: [clientId, title, serviceName, startsAt, endsAt]
+      properties:
+        clientId: { type: integer }
+        title: { type: string, minLength: 1 }
+        serviceName: { type: string, minLength: 1 }
+        startsAt: { type: string, format: date-time }
+        endsAt: { type: string, format: date-time }
+        notes: { type: string }
+        price: { type: number, minimum: 0 }
+    AppointmentUpdate:
+      type: object
+      properties:
+        clientId: { type: integer }
+        title: { type: string, minLength: 1 }
+        serviceName: { type: string }
+        startsAt: { type: string, format: date-time }
+        endsAt: { type: string, format: date-time }
+        status: { type: string, enum: [confirmed, pending, cancelled, completed] }
+        notes: { type: string }
+        price: { type: number, minimum: 0 }
+    Session:
+      type: object
+      required: [id, clientId, clientName, occurredAt, durationMinutes, beforeFeeling, afterFeeling, zones, techniques, observations, practitionerRecommendations]
+      properties:
+        id: { type: integer }
+        clientId: { type: integer }
+        clientName: { type: string }
+        occurredAt: { type: string, format: date-time }
+        durationMinutes: { type: integer }
+        beforeFeeling: { type: integer, minimum: 0, maximum: 10 }
+        afterFeeling: { type: integer, minimum: 0, maximum: 10 }
+        mobilityBefore: { type: ["integer", "null"], minimum: 0, maximum: 10 }
+        mobilityAfter: { type: ["integer", "null"], minimum: 0, maximum: 10 }
+        zones:
+          type: array
+          items: { $ref: "#/components/schemas/SessionZone" }
+        techniques:
+          type: array
+          items: { type: string }
+        observations: { type: string }
+        practitionerRecommendations: { type: string }
+        programId: { type: ["integer", "null"] }
+    SessionInput:
+      type: object
+      required: [clientId, occurredAt, durationMinutes, beforeFeeling, afterFeeling, zones, techniques, observations, practitionerRecommendations]
+      properties:
+        clientId: { type: integer }
+        occurredAt: { type: string, format: date-time }
+        durationMinutes: { type: integer, minimum: 1 }
+        beforeFeeling: { type: integer, minimum: 0, maximum: 10 }
+        afterFeeling: { type: integer, minimum: 0, maximum: 10 }
+        mobilityBefore: { type: integer, minimum: 0, maximum: 10 }
+        mobilityAfter: { type: integer, minimum: 0, maximum: 10 }
+        zones:
+          type: array
+          items: { $ref: "#/components/schemas/SessionZoneInput" }
+        techniques:
+          type: array
+          items: { type: string }
+        observations: { type: string }
+        practitionerRecommendations: { type: string }
+        programId: { type: integer }
+    SessionUpdate:
+      allOf:
+        - $ref: "#/components/schemas/SessionInput"
+    BodyZone:
+      type: object
+      required: [id, slug, label, region, view, x, y, width, height]
+      properties:
+        id: { type: integer }
+        slug: { type: string }
+        label: { type: string }
+        region: { type: string }
+        view: { type: string, enum: [front, back, left, right] }
+        x: { type: number }
+        y: { type: number }
+        width: { type: number }
+        height: { type: number }
+    SessionZone:
+      type: object
+      required: [zoneId, label, technique, intensity, durationMinutes, note]
+      properties:
+        zoneId: { type: integer }
+        label: { type: string }
+        technique: { type: string }
+        intensity: { type: integer, minimum: 0, maximum: 10 }
+        durationMinutes: { type: integer, minimum: 0 }
+        note: { type: string }
+    SessionZoneInput:
+      allOf:
+        - $ref: "#/components/schemas/SessionZone"
+    Exercise:
+      type: object
+      required: [id, name, category, objective, instructions, durationSeconds, repetitions, frequency, precautions, isCustom]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        category: { type: string }
+        objective: { type: string }
+        instructions: { type: string }
+        durationSeconds: { type: integer }
+        repetitions: { type: string }
+        frequency: { type: string }
+        precautions: { type: string }
+        mediaPath: { type: ["string", "null"] }
+        isCustom: { type: boolean }
+    ExerciseInput:
+      type: object
+      required: [name, category, objective, instructions, durationSeconds, repetitions, frequency, precautions]
+      properties:
+        name: { type: string, minLength: 1 }
+        category: { type: string }
+        objective: { type: string }
+        instructions: { type: string }
+        durationSeconds: { type: integer, minimum: 0 }
+        repetitions: { type: string }
+        frequency: { type: string }
+        precautions: { type: string }
+        mediaPath: { type: string }
+    ExerciseUpdate:
+      allOf:
+        - $ref: "#/components/schemas/ExerciseInput"
+    Program:
+      type: object
+      required: [id, clientId, clientName, name, durationDays, status, completionRate, objective, message, exercises, startsOn, endsOn]
+      properties:
+        id: { type: integer }
+        clientId: { type: integer }
+        clientName: { type: string }
+        name: { type: string }
+        durationDays: { type: integer }
+        status: { type: string, enum: [draft, sent, active, completed, expired] }
+        completionRate: { type: number }
+        objective: { type: string }
+        message: { type: string }
+        startsOn: { type: string, format: date }
+        endsOn: { type: string, format: date }
+        exercises:
+          type: array
+          items: { $ref: "#/components/schemas/ProgramExercise" }
+    ProgramExercise:
+      type: object
+      required: [exerciseId, exerciseName, dosage, sortOrder]
+      properties:
+        exerciseId: { type: integer }
+        exerciseName: { type: string }
+        dosage: { type: string }
+        sortOrder: { type: integer }
+    ProgramInput:
+      type: object
+      required: [clientId, name, durationDays, objective, message, startsOn, endsOn, exercises]
+      properties:
+        clientId: { type: integer }
+        name: { type: string, minLength: 1 }
+        durationDays: { type: integer, minimum: 1 }
+        objective: { type: string }
+        message: { type: string }
+        startsOn: { type: string, format: date }
+        endsOn: { type: string, format: date }
+        exercises:
+          type: array
+          items: { $ref: "#/components/schemas/ProgramExercise" }
+        status: { type: string, enum: [draft, sent] }
+    ProgramUpdate:
+      allOf:
+        - $ref: "#/components/schemas/ProgramInput"
+    Notification:
+      type: object
+      required: [id, type, title, body, read, createdAt]
+      properties:
+        id: { type: integer }
+        type: { type: string }
+        title: { type: string }
+        body: { type: string }
+        read: { type: boolean }
+        createdAt: { type: string, format: date-time }
+    Invoice:
+      type: object
+      required: [id, number, clientId, clientName, serviceName, amount, issuedOn, status]
+      properties:
+        id: { type: integer }
+        number: { type: string }
+        clientId: { type: integer }
+        clientName: { type: string }
+        serviceName: { type: string }
+        amount: { type: number }
+        issuedOn: { type: string, format: date }
+        status: { type: string, enum: [draft, sent, paid, overdue, cancelled] }
+    InvoiceInput:
+      type: object
+      required: [clientId, serviceName, amount, issuedOn, status]
+      properties:
+        clientId: { type: integer }
+        serviceName: { type: string }
+        amount: { type: number, minimum: 0 }
+        issuedOn: { type: string, format: date }
+        status: { type: string, enum: [draft, sent, paid, overdue, cancelled] }
+    Subscription:
+      type: object
+      required: [plan, price, interval, status, renewsOn]
+      properties:
+        plan: { type: string, enum: [essential, pro, expert] }
+        price: { type: number }
+        interval: { type: string, enum: [month] }
+        status: { type: string, enum: [active, trialing, past_due, cancelled] }
+        renewsOn: { type: string, format: date }
+    AnatomyStructure:
+      type: object
+      required: [id, name, region, type, description, view, tags]
+      properties:
+        id: { type: integer }
+        name: { type: string }
+        region: { type: string }
+        type: { type: string, enum: [muscle, joint, fascia, landmark] }
+        description: { type: string }
+        view: { type: string }
+        tags:
+          type: array
+          items: { type: string }
 

@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "CAMPUS — Suivi thérapeute et anatomie"
+description = "Une application SaaS professionnelle pour les thérapeutes et praticiens : gérer les clients, documenter les séances, cartographier les zones corporelles et envoyer des programmes de suivi personnalisés."
+version = "1.0.0"
+id = "artifacts/campus"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 19802
+
+[services.development]
+run = "pnpm --filter @workspace/campus run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/campus", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/campus/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "19802"
+BASE_PATH = "/"

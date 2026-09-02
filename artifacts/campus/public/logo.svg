@@ -1,0 +1,6 @@
+<svg width="160" height="48" viewBox="0 0 160 48" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="2" y="2" width="44" height="44" rx="13" fill="#D6A66D"/>
+  <path d="M25.2 13.5C31.8 17.2 33.7 24.7 30 31.3C26.4 37.8 18.9 39.8 12.3 36.1C18.6 33.9 21.1 29.9 21.1 25.6C21.1 21.3 19.6 17.4 25.2 13.5Z" stroke="#173C3B" stroke-width="2.6"/>
+  <circle cx="25" cy="25" r="3" fill="#173C3B"/>
+  <text x="56" y="31" fill="#173C3B" font-family="Arial, sans-serif" font-size="19" font-weight="700" letter-spacing="-0.8">CAMPUS</text>
+</svg>
