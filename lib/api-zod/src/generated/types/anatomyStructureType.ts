@@ -14,4 +14,6 @@ export const AnatomyStructureType = {
   joint: 'joint',
   fascia: 'fascia',
   landmark: 'landmark',
+  point: 'point',
+  zone: 'zone',
 } as const;

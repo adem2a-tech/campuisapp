@@ -21,7 +21,7 @@ export const campusClients = pgTable("campus_clients", {
   lastName: text("last_name").notNull(),
   email: text("email").notNull(),
   phone: text("phone"),
-  birthDate: date("birth_date", { mode: "string" }),
+  birthDate: text("birth_date"),
   status: text("status").notNull().default("active"),
   notes: text("notes").notNull().default(""),
   avatarColor: text("avatar_color").notNull().default("#7C8F82"),

@@ -950,7 +950,7 @@ export const ListAnatomyStructuresResponseItem = zod.object({
   "id": zod.int(),
   "name": zod.string(),
   "region": zod.string(),
-  "type": zod.enum(['muscle', 'joint', 'fascia', 'landmark']),
+  "type": zod.enum(['muscle', 'joint', 'fascia', 'landmark', 'point', 'zone']),
   "description": zod.string(),
   "view": zod.string(),
   "tags": zod.array(zod.string())

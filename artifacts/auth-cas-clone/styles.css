@@ -1,0 +1,341 @@
+/* Clone fidèle — page CAS Università di Corsica */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  line-height: 1.15;
+}
+
+body.login {
+  margin: 0;
+  background: #efefef;
+  font-family: Ubuntu, "Open Sans", Roboto, Arial, sans-serif;
+  font-size: 16px;
+  color: #000;
+  min-height: 100vh;
+}
+
+a {
+  color: #0d6efd;
+  background-color: transparent;
+}
+
+.container {
+  width: 100%;
+  max-width: 1140px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 15px;
+  padding-right: 15px;
+}
+
+.container-lg {
+  width: 100%;
+  max-width: 960px;
+  margin-left: auto;
+  margin-right: auto;
+  padding: 1.5rem 0.75rem;
+}
+
+/* ——— Header ——— */
+header {
+  position: relative;
+  z-index: 10;
+}
+
+.top_header {
+  background-color: #333333;
+  height: 44px;
+  padding: 12px 0;
+  color: white;
+  font-family: Ubuntu, sans-serif;
+  font-weight: 500;
+  font-size: 0.8em;
+  display: flex;
+  align-items: center;
+}
+
+.top_header a {
+  color: white;
+  text-decoration: none;
+}
+
+.top_header a:hover {
+  color: #ff5522;
+}
+
+.menu_top_header span {
+  text-transform: uppercase;
+}
+
+.menu_top_header .nosportails {
+  margin: 0;
+  cursor: default;
+}
+
+.menu_top_header ul {
+  display: inline-block;
+  margin: 0;
+  padding: 0;
+  list-style-type: none;
+}
+
+.menu_top_header ul li {
+  display: inline-block;
+  margin-left: 25px;
+}
+
+.bottom_header {
+  background: white;
+  clear: both;
+}
+
+.bottom_header_inner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  min-height: 99px;
+}
+
+.bottom_header a.logo {
+  display: inline-block;
+  transition: all 0.3s ease-in-out;
+}
+
+.bottom_header img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+.bottom_header .baseline {
+  margin: 15px 0 0 0;
+  font-family: Ubuntu, sans-serif;
+  font-weight: 500;
+  font-size: 2.5em;
+  vertical-align: middle;
+  color: #ff5522;
+  white-space: nowrap;
+}
+
+.bottom_header .baseline span {
+  font-weight: 300;
+  font-size: 0.5em;
+  vertical-align: middle;
+}
+
+/* ——— Boutons université ——— */
+.bouton {
+  font-size: 10pt;
+  background-color: #f4f4f4;
+  color: #ff5522 !important;
+  border: 2px solid #ff5522;
+  text-transform: uppercase;
+  text-decoration: none;
+  padding: 5px 10px;
+  height: 33px;
+  cursor: pointer;
+  display: inline-block;
+  vertical-align: middle;
+  line-height: 1.2;
+  overflow: hidden;
+  transition-duration: 0.3s;
+  transition-property: color, background-color;
+  font-family: inherit;
+}
+
+.bouton:hover,
+.bouton:focus,
+.bouton:active {
+  background-color: #ff5522;
+  color: #ffffff !important;
+}
+
+/* ——— Contenu ——— */
+.main-content {
+  display: flex;
+  justify-content: center;
+}
+
+.card-panel {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  border-radius: 4px;
+  box-shadow: 0 2px 1px -1px rgba(0, 0, 0, 0.2),
+    0 1px 1px 0 rgba(0, 0, 0, 0.14),
+    0 1px 3px 0 rgba(0, 0, 0, 0.12);
+  padding: 20px;
+  flex-grow: 1;
+}
+
+.card-panel--row {
+  display: flex;
+  align-items: center;
+}
+
+.accent {
+  color: #ff5522;
+}
+
+.form-wrapper {
+  margin-top: 0.5rem;
+}
+
+.cas-field {
+  margin: 1rem 0;
+}
+
+/* Champs Material outlined */
+.mdc-field {
+  position: relative;
+  display: block;
+  width: 100%;
+  height: 56px;
+  cursor: text;
+}
+
+.mdc-outline {
+  position: absolute;
+  inset: 0;
+  border: 1px solid rgba(0, 0, 0, 0.38);
+  border-radius: 4px;
+  pointer-events: none;
+  transition: border-color 0.15s;
+}
+
+.mdc-field:focus-within .mdc-outline {
+  border-color: #ff5522;
+  border-width: 2px;
+}
+
+.mdc-notch {
+  position: absolute;
+  top: 0;
+  left: 12px;
+  transform: translateY(-50%);
+  background: #fff;
+  padding: 0 4px;
+  max-width: calc(100% - 24px);
+}
+
+.mdc-floating-label {
+  font-size: 12px;
+  color: rgba(0, 0, 0, 0.6);
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.mdc-field:focus-within .mdc-floating-label {
+  color: #ff5522;
+}
+
+.mdc-field input {
+  width: 100%;
+  height: 100%;
+  border: none;
+  outline: none;
+  background: transparent;
+  padding: 12px 16px 8px;
+  font-family: inherit;
+  font-size: 16px;
+  color: rgba(0, 0, 0, 0.87);
+  border-radius: 4px;
+}
+
+.accesskey {
+  text-decoration: underline;
+}
+
+.password-row {
+  display: flex;
+  align-items: stretch;
+  gap: 0;
+}
+
+.password-row .mdc-field {
+  flex: 1;
+}
+
+.reveal-password {
+  flex-shrink: 0;
+  align-self: center;
+  width: 36px;
+  min-width: 36px;
+  height: 36px !important;
+  padding: 0 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-left: 4px;
+  border-radius: 0;
+}
+
+.reveal-password .mdi {
+  font-size: 20px;
+  line-height: 1;
+}
+
+.pmlinks {
+  margin: 0.5rem 0;
+  font-size: 16px;
+}
+
+.pmlinks a {
+  text-decoration: underline;
+}
+
+.help-icon {
+  color: #666;
+  margin-right: 4px;
+  vertical-align: middle;
+}
+
+.security-notice {
+  margin: 1rem 0 0;
+  font-size: 14px;
+  color: #000;
+}
+
+.security-notice a {
+  color: #0d6efd;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .bottom_header .baseline {
+    font-size: 1.6em;
+  }
+
+  .hidden_md {
+    display: none;
+  }
+
+  .bottom_header_inner {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+@media (max-width: 576px) {
+  .bottom_header .baseline {
+    font-size: 1.25em;
+    float: none;
+    margin-top: 8px;
+  }
+
+  .menu_top_header ul li {
+    margin-left: 12px;
+  }
+
+  .card-panel--row #nouvel_arrivant,
+  .card-panel--row #autres {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 12px;
+  }
+}

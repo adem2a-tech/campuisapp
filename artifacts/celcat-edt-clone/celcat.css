@@ -1,0 +1,363 @@
+/* Styles calqués sur edt.univ-corse.fr — Celcat v9 + Bootstrap 3.3.7 + Open Sans 400/700 */
+
+html, body {
+  margin: 0;
+  height: 100%;
+}
+
+body {
+  font-family: "Open Sans", sans-serif;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 20px;
+  color: #333;
+  background: #fff;
+  padding-top: 50px;
+  padding-bottom: 20px;
+  overflow-y: scroll;
+}
+
+/* Navbar inverse Celcat #234435 */
+.navbar-inverse {
+  background-color: #234435;
+  border-color: #1a3328;
+  min-height: 50px;
+  margin-bottom: 0;
+}
+.navbar-inverse .navbar-brand {
+  margin-top: -11px;
+  padding: 15px;
+  height: 50px;
+}
+.navbar-inverse .navbar-brand img {
+  height: 42px;
+  width: auto;
+  display: block;
+}
+.navbar-inverse .navbar-nav > li > a {
+  color: #e6e6e6;
+  font-size: 14px;
+  font-weight: 400;
+  padding: 15px;
+}
+.navbar-inverse .navbar-nav > li > a:hover,
+.navbar-inverse .navbar-nav > li > a:focus {
+  color: #fff;
+  background-color: transparent;
+}
+.navbar-inverse .navbar-nav > .active > a {
+  background-color: #1a3328;
+  color: #fff;
+}
+.navbar-inverse .logInOrOut .small {
+  font-size: 85%;
+}
+
+#app {
+  display: flex;
+  height: calc(100vh - 50px);
+  overflow: hidden;
+  padding: 0;
+}
+
+#sidebar {
+  width: 260px;
+  flex-shrink: 0;
+  background: #f5f5f5;
+  border-right: 1px solid #ddd;
+  padding: 12px 14px;
+  overflow: auto;
+}
+#sidebar h2 {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 8px 0 6px;
+  color: #333;
+}
+#sidebar h4 {
+  font-size: 14px;
+  font-weight: 700;
+  margin: 0 0 8px;
+  line-height: 1.35;
+}
+#sidebar .muted {
+  color: #777;
+  font-size: 12px;
+  margin: 0 0 12px;
+}
+.sb-card {
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 10px;
+}
+.sb-meta {
+  font-size: 12px;
+  margin-top: 4px;
+  color: #333;
+}
+.sb-meta span {
+  display: inline-block;
+  min-width: 90px;
+  color: #777;
+}
+#evtDetail {
+  margin-top: 12px;
+  background: #fff;
+  border: 1px solid #ddd;
+  border-radius: 3px;
+  padding: 10px;
+  font-size: 12px;
+}
+
+#content {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: #fff;
+  padding: 8px 12px 0;
+}
+
+.browse {
+  margin-bottom: 8px;
+}
+.browse .panel-heading {
+  padding: 6px 12px;
+  font-size: 14px;
+  background: #f5f5f5;
+}
+.browse .panel-body {
+  padding: 10px 12px;
+}
+.browse-line {
+  display: flex;
+  align-items: flex-end;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.fld {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+.fld label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #333;
+  margin: 0;
+}
+.fld.wide { flex: 1; min-width: 220px; }
+.fld .form-control { min-width: 130px; }
+.s2 {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  height: auto !important;
+  min-height: 30px;
+  padding: 2px 6px !important;
+}
+.s2 input {
+  border: 0;
+  outline: 0;
+  flex: 1;
+  min-width: 20px;
+  font: inherit;
+  background: transparent;
+}
+.s2-choice {
+  background: #fff;
+  border: 1px solid #aaa;
+  border-radius: 3px;
+  padding: 1px 6px 1px 2px;
+  font-size: 12px;
+  color: #555;
+  white-space: nowrap;
+}
+.s2-x {
+  font-weight: 700;
+  cursor: pointer;
+  padding: 0 4px;
+  color: #999;
+}
+.mes {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 13px;
+  font-weight: 400;
+  margin: 8px 0 0;
+  white-space: nowrap;
+}
+
+#calendar {
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+.fc {
+  height: 100% !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 1em !important;
+}
+.fc-view-container { height: calc(100% - 46px) !important; }
+.fc-view, .fc-view > table { height: 100%; }
+
+.fc-toolbar {
+  margin-bottom: 1em !important;
+  text-align: center;
+}
+.fc-toolbar .fc-center { padding-top: 4px; }
+.fc-toolbar .fc-center h2 {
+  margin: 0 !important;
+  font-size: 22px !important;
+  font-weight: 700;
+  color: #333;
+  font-family: "Open Sans", sans-serif !important;
+}
+
+/* Boutons FullCalendar = style Bootstrap Celcat */
+.fc-button {
+  height: auto !important;
+  padding: 0 0.6em !important;
+  font-size: 14px !important;
+  font-family: "Open Sans", sans-serif !important;
+  font-weight: 400 !important;
+  border-radius: 4px !important;
+  background: #e6e6e6 !important;
+  border: 1px solid rgba(0,0,0,.1) !important;
+  color: #333 !important;
+  box-shadow: none !important;
+  text-shadow: none !important;
+}
+.fc-state-active,
+.fc-state-down {
+  background: #d4d4d4 !important;
+  color: #333 !important;
+}
+.fc-state-disabled {
+  opacity: .55 !important;
+}
+
+.fc-day-header {
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  padding: 0 !important;
+  color: #333 !important;
+}
+.fc-day-header a {
+  color: #337ab7 !important;
+  text-decoration: none !important;
+  font-weight: 700 !important;
+}
+.fc-day-header a:hover { text-decoration: underline !important; }
+
+.fc-axis {
+  font-family: "Open Sans", sans-serif !important;
+  font-size: 14px !important;
+  font-weight: 700 !important;
+  color: #333 !important;
+  padding: 0 4px !important;
+}
+.fc-unthemed td.fc-today { background: #fcf8e3 !important; }
+.fc-time-grid .fc-slats td { height: 21.5px !important; }
+.fc-unthemed .fc-divider,
+.fc-unthemed .fc-popover,
+.fc-unthemed .fc-row,
+.fc-unthemed tbody,
+.fc-unthemed td,
+.fc-unthemed th,
+.fc-unthemed thead {
+  border-color: #ddd !important;
+}
+
+/* Événements = rendu Celcat exact */
+.fc-event {
+  font-size: 0.85em !important; /* 11.9px sur base 14px */
+  line-height: 1.3 !important;
+  border-radius: 3px !important;
+  border: 1px solid rgb(1, 42, 54) !important;
+  font-weight: 400 !important;
+  font-family: "Open Sans", sans-serif !important;
+}
+.fc-time-grid-event {
+  overflow: hidden !important;
+}
+.fc-time-grid-event .fc-content {
+  overflow: hidden !important;
+  padding: 0 !important;
+}
+.fc-time-grid-event .fc-time,
+.fc-time-grid-event .fc-title {
+  padding: 0 1px !important;
+  font-weight: 400 !important;
+}
+.fc-time-grid-event .fc-time {
+  font-size: 0.85em !important; /* ~10.1px */
+  white-space: nowrap !important;
+  font-weight: 400 !important;
+}
+.fc-event .fc-bg { background: none !important; }
+
+.fc-event.cat-blue {
+  background-color: #0000ff !important;
+  border-color: rgb(1, 42, 54) !important;
+  color: #fff !important;
+}
+.fc-event.cat-orange {
+  background-color: #ff8040 !important;
+  border-color: rgb(1, 42, 54) !important;
+  color: #000 !important;
+}
+.fc-event.cat-black {
+  background-color: #000a0a !important;
+  border-color: #000 !important;
+  color: #fff !important;
+}
+
+/* Légende couleurs Celcat */
+#ctColourKey {
+  margin-top: 4px;
+}
+#ctColourKey .panel {
+  margin-bottom: 6px;
+}
+#ctColourKey .panel-body {
+  padding: 6px 10px;
+}
+#ctColourKey a {
+  color: #333;
+  text-decoration: none;
+  margin-right: 10px;
+}
+.colours {
+  display: inline;
+}
+.colorKeyItem {
+  display: inline-block;
+  margin: 0 4px 0 0;
+  padding: 1px 6px;
+  font-size: 11px;
+  border: 1px solid #333;
+  cursor: pointer;
+  line-height: 1.4;
+}
+
+footer.small {
+  padding: 4px 0 8px;
+  color: #666;
+  font-size: 12px;
+}
+footer.small p { margin: 4px 0; }
+footer select {
+  font-size: 12px;
+  margin-left: 4px;
+}
+
+@media (max-width: 900px) {
+  .navbar-nav { display: none; }
+  #app { flex-direction: column; height: auto; }
+  #sidebar { width: 100%; }
+}

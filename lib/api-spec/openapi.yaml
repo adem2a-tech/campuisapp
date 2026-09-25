@@ -836,7 +836,7 @@ components:
         id: { type: integer }
         name: { type: string }
         region: { type: string }
-        type: { type: string, enum: [muscle, joint, fascia, landmark] }
+        type: { type: string, enum: [muscle, joint, fascia, landmark, point, zone] }
         description: { type: string }
         view: { type: string }
         tags:

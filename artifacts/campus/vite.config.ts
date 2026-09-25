@@ -4,6 +4,7 @@ import tailwindcss from '@tailwindcss/vite';
 import { defineConfig } from 'vite';
 
 import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
+import { oscarCampusProxy } from './vite.oscar-proxy';
 
 const rawPort = process.env.PORT;
 
@@ -30,6 +31,7 @@ if (!basePath) {
 export default defineConfig({
   base: basePath,
   plugins: [
+    oscarCampusProxy(),
     react(),
     tailwindcss({ optimize: false }),
     runtimeErrorOverlay(),
@@ -69,6 +71,12 @@ export default defineConfig({
     strictPort: true,
     host: '0.0.0.0',
     allowedHosts: true,
+    proxy: {
+      '/api': {
+        target: process.env.API_URL || 'http://localhost:8080',
+        changeOrigin: true,
+      },
+    },
     fs: {
       strict: true,
     },

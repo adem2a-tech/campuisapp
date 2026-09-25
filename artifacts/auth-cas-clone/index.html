@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
+  <meta name="robots" content="noindex" />
+  <title>CAS - Central Authentication Service Login</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Ubuntu:wght@300;400;500;700&display=swap" rel="stylesheet" />
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@7.4.47/css/materialdesignicons.min.css" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body class="login">
+  <header role="banner">
+    <div class="top_header">
+      <div class="container">
+        <div class="menu_top_header">
+          <span>
+            <a href="https://www.universita.corsica" class="hidden_md">Università di corsica</a>
+            <span class="hidden_md">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</span>
+            <label class="nosportails">Nos Portails &nbsp;&nbsp;:</label>
+          </span>
+          <ul>
+            <li><a href="https://studia.universita.corsica">Étudiants</a></li>
+            <li><a href="https://portail.universita.corsica">Personnels</a></li>
+            <li><a href="https://ricerca.universita.corsica">Recherche</a></li>
+            <li><a href="https://fundazione.universita.corsica">Fondation</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+
+    <div class="bottom_header">
+      <div class="container bottom_header_inner">
+        <a href="https://portail.universita.corsica/" class="logo">
+          <img src="logo.png" alt="logo" width="115" height="95" />
+        </a>
+        <div class="baseline">Authentification | <span>Campus numérique</span></div>
+      </div>
+    </div>
+  </header>
+
+  <main class="main-content">
+    <div class="container-lg">
+      <!-- Carte connexion -->
+      <div class="card-panel">
+        <div id="etu_pers_vacataires">
+          <span class="accent">&gt; Vous êtes étudiant, personnel, vacataire ou ALUMNI de l'Università di Corsica</span>
+        </div>
+
+        <form id="fm1" class="form-wrapper" action="#" method="post" autocomplete="off">
+          <section class="cas-field">
+            <label class="mdc-field" for="username">
+              <span class="mdc-outline">
+                <span class="mdc-notch">
+                  <span class="mdc-floating-label"><span class="accesskey">U</span>sername:</span>
+                </span>
+              </span>
+              <input id="username" name="username" type="text" required autocapitalize="none" spellcheck="false" autocomplete="username" />
+            </label>
+          </section>
+
+          <section class="cas-field">
+            <div class="password-row">
+              <label class="mdc-field" for="password">
+                <span class="mdc-outline">
+                  <span class="mdc-notch">
+                    <span class="mdc-floating-label"><span class="accesskey">P</span>assword:</span>
+                  </span>
+                </span>
+                <input id="password" name="password" type="password" required autocomplete="off" class="pwd" />
+              </label>
+              <button class="bouton reveal-password" type="button" tabindex="-1" aria-label="Afficher le mot de passe">
+                <i class="mdi mdi-eye"></i>
+              </button>
+            </div>
+          </section>
+
+          <button class="bouton" name="submitBtn" type="submit">
+            <span>Login</span>
+          </button>
+        </form>
+
+        <div id="pmlinks" class="pmlinks">
+          <br />
+          <span class="mdi mdi-account-question help-icon"></span>
+          <a href="https://activation.universita.corsica/guichet_activation_reset_compte-front.php?acces=ok&profil=&id_site=0&type=changement">Forgot your password? </a>
+          <a href="https://dsin.universita.corsica/plugins/faq/listing_faq-front.php?id_faq=5&acces=ok&id_art=4515&id_rub=0&id_site=47&id_menu=0&header_plugin=ok" target="_blank" rel="noopener">Besoin d'aide ?</a>
+        </div>
+
+        <p id="securityNotice" class="security-notice">
+          For security reasons, please <a href="#">log out</a> and exit your web browser when you are done accessing services that require authentication!
+        </p>
+      </div>
+
+      <br />
+
+      <!-- Nouvel arrivant -->
+      <div class="card-panel card-panel--row">
+        <div id="nouvel_arrivant">
+          <span class="accent">&gt; Vous êtes nouvel arrivant à l'Università di Corsica, pour activer votre compte</span>
+          &nbsp;&nbsp;&nbsp;
+          <a href="https://activation.universita.corsica/guichet_activation_reset_compte-front.php?acces=ok&profil=&id_site=0&type=activation" class="bouton">
+            <span>cliquez ici</span>
+          </a>
+        </div>
+      </div>
+
+      <br />
+
+      <!-- Extérieur -->
+      <div class="card-panel card-panel--row">
+        <div id="autres">
+          <span class="accent">&gt; Vous êtes extérieur, pour vous connecter</span>
+          &nbsp;&nbsp;&nbsp;
+          <a href="https://portailweb.universita.corsica/plugins/auth/auth_externe/auth_externe.php?id_site=0&lang=fr&service=auth_externe&url_appli=https://portail.universita.corsica" class="bouton">
+            <span>cliquez ici</span>
+          </a>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>

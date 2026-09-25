@@ -36,23 +36,33 @@ app.use(CLERK_PROXY_PATH, clerkProxyMiddleware());
 app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
-app.use(
-  clerkMiddleware((req) => ({
-    publishableKey: publishableKeyFromHost(
-      getClerkProxyHost(req) ?? "",
-      process.env.CLERK_PUBLISHABLE_KEY,
-    ),
-  })),
-);
+
+const clerkEnabled = Boolean(process.env.CLERK_SECRET_KEY && process.env.CLERK_PUBLISHABLE_KEY);
+if (clerkEnabled) {
+  app.use(
+    clerkMiddleware((req) => ({
+      publishableKey: publishableKeyFromHost(
+        getClerkProxyHost(req) ?? "",
+        process.env.CLERK_PUBLISHABLE_KEY,
+      ),
+    })),
+  );
+} else if (process.env.NODE_ENV !== "production") {
+  console.log("[api-server] Clerk désactivé en développement local");
+}
 
 const requireProductionAuth = (req: express.Request, res: express.Response, next: express.NextFunction) => {
   if (req.path === "/healthz") {
     next();
     return;
   }
+  if (!clerkEnabled || process.env.NODE_ENV !== "production") {
+    next();
+    return;
+  }
   const auth = getAuth(req);
   const userId = auth?.sessionClaims?.userId || auth?.userId;
-  if (process.env.NODE_ENV === "production" && !userId) {
+  if (!userId) {
     res.status(401).json({ error: "Unauthorized" });
     return;
   }

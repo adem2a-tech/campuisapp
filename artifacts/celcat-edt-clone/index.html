@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>CELCAT Calendar</title>
+  <link rel="stylesheet" href="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/css/bootstrap.min.css" crossorigin="anonymous" />
+  <link rel="stylesheet" href="https://edt.univ-corse.fr/css/bundle1.min.css" />
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Open+Sans:400,700&subset=latin-ext" />
+  <link rel="stylesheet" href="https://edt.univ-corse.fr/css/homepageBundle.min.css" />
+  <style>
+    /* Couleurs catégories (identiques Celcat) */
+    .fc-event.cat-blue { background-color:#0000FF !important; border-color:rgb(1,42,54) !important; color:#fff !important; }
+    .fc-event.cat-orange { background-color:#FF8040 !important; border-color:rgb(1,42,54) !important; color:#000 !important; }
+    .fc-event.cat-black { background-color:#000A0A !important; border-color:#000 !important; color:#fff !important; }
+    #calendar { min-height: 640px; }
+  </style>
+</head>
+<body>
+
+<nav class="navbar navbar-inverse navbar-fixed-top" style="background-color: #234435">
+  <div class="container-fluid">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#main-navbar-collapse" style="background-color: #78B99B">
+        <span class="sr-only">Activer/désactiver navigation</span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#">
+        <img src="images/logo-celcat.png" srcset="images/logo-celcat.svg" alt="" />
+      </a>
+    </div>
+    <div class="navbar-collapse collapse" id="main-navbar-collapse">
+      <ul class="nav navbar-nav">
+        <li><a href="#">Accueil</a></li>
+        <li><a class="adminPageLink" href="#">Admin</a></li>
+        <li class="navbar-link"><a id="monthPicker">Sélecteur de dates</a></li>
+        <li class="navbar-link"><a id="eventFilter">Filtre d’événements</a></li>
+        <li class="navbar-link"><a id="shareCalendar">Partager</a></li>
+        <li class="navbar-link"><a href="#">Aide</a></li>
+      </ul>
+      <ul class="nav navbar-nav navbar-right">
+        <li>
+          <a class="logInOrOut" href="#">
+            <i class="fa fa-user" aria-hidden="true"></i>
+            <span>Déconnexion</span>
+            <span class="small">- 20261655</span>
+          </a>
+        </li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div id="mainContentDiv" class="container-fluid body-content" style="min-width: 355px; margin-left: 350px;">
+
+  <div id="calendarSidebar" class="sidebar" style="display: block; width: 350px;">
+    <div class="panel sidebarPanel" style="width: 336px;">
+      <div id="sidebarInBtnDiv" style="left: 324px; top: 84px; display: block;">
+        <button class="btn btn-info" type="button" id="sidebarToggleBtn">
+          <i class="fa fa-chevron-left" aria-hidden="true"></i>
+        </button>
+      </div>
+      <div class="sidebarTitleDiv">
+        <h2><span id="sidebarEventTitle">Événement</span></h2>
+      </div>
+      <div id="sidebarEventContentDiv">(aucun sélectionné)</div>
+      <div class="sidebarTitleDiv">
+        <h2><span id="sidebarRecordsTitle">Groupe</span></h2>
+      </div>
+      <div id="sidebarResourceContentDiv">
+        <div class="sidebarResItemDiv" style="border-color: #DAEAE3;background-color: #EFF7F4">
+          <div class="sideBarItemTitle" style="background-color: #DAEAE3">
+            <span class="resNav"><strong>L1ST (Licence 1 Sciences et Technologies)</strong></span>
+          </div>
+          <div class="sideBarItemContent">
+            <strong>Département:</strong> <span>CST</span><br>
+            <strong>Url:</strong> <span></span><br>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div id="sidebarOutBtnDiv" style="top: 84px; display: none;">
+    <button class="btn btn-info" type="button" id="sidebarOpenBtn">
+      <i class="fa fa-chevron-right" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div class="panel panel-default" id="calBrowseBarDiv">
+    <div class="panel-heading" role="tab" id="browsePanel">
+      <div id="browseBtn" class="pull-right" type="button">
+        <i class="fa fa-chevron-up" aria-hidden="true"></i>
+      </div>
+      <h4 class="panel-title" id="browsePanelTitle">
+        <small><span class="badge resCountBadge"></span></small>
+        <span class="panelBtnTitle">L1ST (Licence 1 Sciences et Technologies)</span>
+      </h4>
+    </div>
+    <div id="browseBody" class="panel-collapse collapse in" role="tabpanel" aria-expanded="true">
+      <div class="panel-body">
+        <form method="post" onsubmit="return false;">
+          <div class="col-sm-2 col-md-2">
+            <div class="form-group">
+              <label class="control-label" for="resourceTypeSelectList">Type</label><br>
+              <select class="form-control" id="resourceTypeSelectList" style="width: 100%">
+                <option value="100">Matières</option>
+                <option value="102">Salles</option>
+                <option value="103" selected>Groupes</option>
+              </select>
+            </div>
+          </div>
+          <div class="col-sm-10 col-md-10" id="mainResBrowseDiv">
+            <div class="form-group">
+              <label class="control-label" for="resourceSelectList">Ressource(s)</label><br>
+              <div class="form-control" style="height:auto;min-height:34px;padding:4px 8px;">
+                <span class="select2-selection__choice" style="background:#e4e4e4;border:1px solid #aaa;border-radius:4px;padding:0 5px;display:inline-block;margin:2px 0;">
+                  <span style="color:#999;font-weight:bold;margin-right:2px;">×</span>L1ST (Licence 1…
+                </span>
+              </div>
+              <div id="myResCheckBoxDiv">
+                <label>
+                  <input type="checkbox" />
+                  <span class="myResSpan">Mes ressources</span>
+                </label>
+              </div>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+
+  <div id="calendar" class="calendardiv"></div>
+
+  <div id="ctColourKey">
+    <div class="panel panel-info colorKey small">
+      <div class="panel-body">
+        <div class="dropdown dropup">
+          <a class="dropdown-toggle" id="colorKeyTitle" role="button" href="#">
+            <span class="colorKeyTitleText">Code des couleurs - Catégorie d’événement</span>
+            <span class="caret"></span>
+          </a>
+        </div>
+        <div class="colours">
+          <span class="colorKeyItem" style="background-color:#0000FF;color:#ffffff;cursor:pointer">TD</span>
+          <span class="colorKeyItem" style="background-color:#FF8040;color:#000000;cursor:pointer">Cours</span>
+          <span class="colorKeyItem" style="background-color:#000A0A;color:#ffffff;cursor:pointer">Annulé ou à replacer</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+  <footer class="small">
+    <div class="row">
+      <div class="col-xs-6 hidden-xs hidden-print">
+        <p>© 2026 - CELCAT Calendar <span class="small">(v9.0.6802.2502)</span></p>
+      </div>
+      <div class="col-xs-6 text-right">
+        <div class="hidden-print">
+          <span class="hidden-sm hidden-xs">Langue</span>
+          <select id="requestCulture_RequestCulture_UICulture_Name">
+            <option value="en-GB">English (United Kingdom)</option>
+            <option value="en-US">English (United States)</option>
+            <option selected value="fr-FR">French (France)</option>
+          </select>
+        </div>
+      </div>
+    </div>
+  </footer>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/jquery@3.6.0/dist/jquery.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/min/moment.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/moment@2.29.4/locale/fr.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/fullcalendar.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/fullcalendar@3.10.2/dist/locale/fr.js"></script>
+<script src="events.js"></script>
+<script src="celcat.js"></script>
+</body>
+</html>

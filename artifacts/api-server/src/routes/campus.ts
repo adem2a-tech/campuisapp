@@ -12,6 +12,7 @@ import {
   campusPrograms,
   campusSessions,
 } from "@workspace/db";
+import { REFERENCE_ANATOMY, REFERENCE_EXERCISES } from "../seed/campus-reference-content";
 import {
   ArchiveClientParams,
   CreateAppointmentBody,
@@ -78,52 +79,48 @@ const isoInDays = (days: number, hour: number) => {
 };
 const today = () => now().toISOString().slice(0, 10);
 
+/** pg-mem ne gère pas `.returning()` de Drizzle — insert/update puis relecture. */
+async function fetchById<T extends { id: typeof campusClients.id }>(
+  table: T,
+  id: number,
+): Promise<T["$inferSelect"] | undefined> {
+  const [row] = await db.select().from(table).where(eq(table.id, id));
+  return row;
+}
+
+async function insertRow<T extends { id: typeof campusClients.id }>(
+  table: T,
+  values: T["$inferInsert"],
+): Promise<T["$inferSelect"]> {
+  await db.insert(table).values(values);
+  const [row] = await db.select().from(table).orderBy(desc(table.id)).limit(1);
+  if (!row) throw new Error("Échec de l'insertion");
+  return row;
+}
+
+async function updateRow<T extends { id: typeof campusClients.id }>(
+  table: T,
+  id: number,
+  values: Partial<T["$inferInsert"]>,
+): Promise<T["$inferSelect"]> {
+  await db.update(table).set(values).where(eq(table.id, id));
+  const row = await fetchById(table, id);
+  if (!row) throw new Error("Enregistrement introuvable");
+  return row;
+}
+
+async function deleteRow<T extends { id: typeof campusClients.id }>(
+  table: T,
+  id: number,
+): Promise<T["$inferSelect"]> {
+  const row = await fetchById(table, id);
+  if (!row) throw new Error("Enregistrement introuvable");
+  await db.delete(table).where(eq(table.id, id));
+  return row;
+}
+
 async function ensureSeeded(): Promise<void> {
   if (seeded) return;
-  const existing = await db.select({ id: campusClients.id }).from(campusClients).limit(1);
-  if (existing.length === 0) {
-    const clients = await db
-      .insert(campusClients)
-      .values([
-        { firstName: "Camille", lastName: "Martin", email: "camille.martin@example.com", phone: "06 12 34 56 78", notes: "Suivi mobilité cervicale.", avatarColor: "#B7C9B8" },
-        { firstName: "Thomas", lastName: "Bernard", email: "thomas.bernard@example.com", phone: "06 22 47 18 91", notes: "Retour au mouvement après une période sédentaire.", avatarColor: "#D8B69C" },
-        { firstName: "Sarah", lastName: "Roux", email: "sarah.roux@example.com", phone: "06 43 11 82 09", notes: "Travail respiratoire et récupération.", avatarColor: "#B5C5D8" },
-        { firstName: "Nicolas", lastName: "Petit", email: "nicolas.petit@example.com", phone: "06 55 28 74 10", notes: "Programme de mobilité générale.", avatarColor: "#D5C6A8" },
-      ])
-      .returning();
-    const [camille, thomas, sarah, nicolas] = clients;
-    await db.insert(campusAppointments).values([
-      { clientId: camille.id, title: "Suivi mobilité", serviceName: "Séance corps entier", startsAt: isoInDays(0, 10), endsAt: isoInDays(0, 11), price: "65", status: "confirmed" },
-      { clientId: thomas.id, title: "Bilan mouvement", serviceName: "Bilan initial", startsAt: isoInDays(0, 14), endsAt: isoInDays(0, 15), price: "75", status: "pending" },
-      { clientId: sarah.id, title: "Récupération", serviceName: "Massage & mobilité", startsAt: isoInDays(1, 9), endsAt: isoInDays(1, 10), price: "65", status: "confirmed" },
-      { clientId: nicolas.id, title: "Séance de suivi", serviceName: "Mobilité ciblée", startsAt: isoInDays(2, 16), endsAt: isoInDays(2, 17), price: "65", status: "confirmed" },
-    ]);
-    await db.insert(campusSessions).values([
-      { clientId: camille.id, occurredAt: isoInDays(-7, 10), durationMinutes: 60, beforeFeeling: 4, afterFeeling: 7, mobilityBefore: 5, mobilityAfter: 8, zones: [{ zoneId: 1, label: "Trapèze supérieur droit", technique: "Ventouses", intensity: 5, durationMinutes: 8, note: "Tension importante" }], techniques: ["Ventouses", "Mobilité active"], observations: "Bonne réponse au travail de la ceinture scapulaire.", practitionerRecommendations: "Respiration lente et mobilité douce au quotidien." },
-      { clientId: thomas.id, occurredAt: isoInDays(-14, 14), durationMinutes: 75, beforeFeeling: 6, afterFeeling: 5, mobilityBefore: 4, mobilityAfter: 6, zones: [{ zoneId: 2, label: "Hanche gauche", technique: "Travail manuel", intensity: 4, durationMinutes: 12, note: "Amplitude à observer" }], techniques: ["Travail manuel", "Respiration"], observations: "Mobilité perçue en progression.", practitionerRecommendations: "Programme de mobilité sur 7 jours." },
-      { clientId: sarah.id, occurredAt: isoInDays(-21, 9), durationMinutes: 50, beforeFeeling: 5, afterFeeling: 8, mobilityBefore: 6, mobilityAfter: 8, zones: [{ zoneId: 3, label: "Zone thoracique", technique: "Respiration guidée", intensity: 3, durationMinutes: 10, note: "Détente progressive" }], techniques: ["Respiration guidée", "Étirement"], observations: "Retour très positif après séance.", practitionerRecommendations: "Poursuivre les exercices respiratoires." },
-    ]);
-    await db.insert(campusExercises).values([
-      { name: "Rotation thoracique au sol", category: "mobility", objective: "Redonner de la liberté au haut du dos.", instructions: "Respirer lentement et accompagner le mouvement sans forcer.", durationSeconds: 45, repetitions: "6 par côté", frequency: "1 fois / jour", precautions: "Rester dans une amplitude confortable." },
-      { name: "Respiration 4–6", category: "breathing", objective: "Installer un rythme respiratoire calme.", instructions: "Inspirer 4 secondes, expirer 6 secondes.", durationSeconds: 300, repetitions: "5 minutes", frequency: "1 à 2 fois / jour", precautions: "Ne pas retenir sa respiration." },
-      { name: "Ouverture de hanche", category: "stretching", objective: "Explorer une amplitude douce.", instructions: "Maintenir la position puis revenir lentement.", durationSeconds: 60, repetitions: "3 par côté", frequency: "3 fois / semaine", precautions: "Aucune douleur aiguë." },
-      { name: "Pont fessier", category: "strengthening", objective: "Activer la chaîne postérieure.", instructions: "Pousser dans les pieds et contrôler la descente.", durationSeconds: 90, repetitions: "3 × 10", frequency: "3 fois / semaine", precautions: "Garder les côtes relâchées." },
-    ]);
-    await db.insert(campusPrograms).values([
-      { clientId: camille.id, name: "Retour à la mobilité", durationDays: 14, status: "active", completionRate: "82", objective: "Bouger plus librement au quotidien.", message: "Un programme court pour garder le bénéfice de la séance.", startsOn: today(), endsOn: isoInDays(14, 0).toISOString().slice(0, 10), exercises: [{ exerciseId: 1, exerciseName: "Rotation thoracique au sol", dosage: "6 par côté", sortOrder: 1 }, { exerciseId: 2, exerciseName: "Respiration 4–6", dosage: "5 min / jour", sortOrder: 2 }] },
-      { clientId: thomas.id, name: "7 jours de mouvement", durationDays: 7, status: "sent", completionRate: "0", objective: "Retrouver des repères de mouvement.", message: "On commence progressivement, sans chercher la performance.", startsOn: today(), endsOn: isoInDays(7, 0).toISOString().slice(0, 10), exercises: [{ exerciseId: 3, exerciseName: "Ouverture de hanche", dosage: "3 par côté", sortOrder: 1 }] },
-    ]);
-    await db.insert(campusNotifications).values([
-      { type: "feedback", title: "Nouveau retour client", body: "Camille a partagé son ressenti après le programme.", read: false },
-      { type: "appointment", title: "Rendez-vous à confirmer", body: "Thomas attend votre confirmation pour demain.", read: false },
-      { type: "program", title: "Programme actif", body: "Le programme de Camille est réalisé à 82 %.", read: true },
-    ]);
-    await db.insert(campusInvoices).values([
-      { number: "FAC-2026-024", clientId: camille.id, serviceName: "Séance corps entier", amount: "65", issuedOn: today(), status: "paid" },
-      { number: "FAC-2026-023", clientId: thomas.id, serviceName: "Bilan initial", amount: "75", issuedOn: isoInDays(-3, 0).toISOString().slice(0, 10), status: "sent" },
-      { number: "FAC-2026-022", clientId: sarah.id, serviceName: "Massage & mobilité", amount: "65", issuedOn: isoInDays(-7, 0).toISOString().slice(0, 10), status: "overdue" },
-    ]);
-  }
   if ((await db.select({ id: campusBodyZones.id }).from(campusBodyZones).limit(1)).length === 0) {
     await db.insert(campusBodyZones).values([
       { slug: "head", label: "Tête", region: "Tête", view: "front", x: "44", y: "6", width: "12", height: "11" },
@@ -140,13 +137,36 @@ async function ensureSeeded(): Promise<void> {
       { slug: "left-knee", label: "Genou gauche", region: "Genou", view: "front", x: "37", y: "76", width: "10", height: "9" },
     ]);
   }
-  if ((await db.select({ id: campusAnatomyStructures.id }).from(campusAnatomyStructures).limit(1)).length === 0) {
-    await db.insert(campusAnatomyStructures).values([
-      { name: "Trapèze supérieur", region: "Ceinture scapulaire", type: "muscle", description: "Structure située entre la nuque et l’épaule, utile comme repère de travail.", view: "postérieure", tags: ["nuque", "épaule", "dos"] },
-      { name: "Diaphragme", region: "Thorax", type: "muscle", description: "Repère anatomique associé à la respiration et à la mobilité thoracique.", view: "antérieure", tags: ["respiration", "thorax"] },
-      { name: "Articulation coxo-fémorale", region: "Hanche", type: "joint", description: "Articulation profonde entre le bassin et le fémur.", view: "latérale", tags: ["hanche", "mobilité"] },
-      { name: "Fascia thoraco-lombaire", region: "Dos", type: "fascia", description: "Réseau conjonctif postérieur servant de repère de lecture du dos.", view: "postérieure", tags: ["fascia", "lombaires"] },
-    ]);
+  if ((await db.select({ id: campusAnatomyStructures.id }).from(campusAnatomyStructures).limit(1)).length === 0
+    || (await db.select().from(campusAnatomyStructures)).length < REFERENCE_ANATOMY.length) {
+    await db.delete(campusAnatomyStructures);
+    await db.insert(campusAnatomyStructures).values(
+      REFERENCE_ANATOMY.map((item) => ({
+        name: item.name,
+        region: item.region,
+        type: item.type,
+        description: item.description,
+        view: item.view,
+        tags: [...item.tags],
+      })),
+    );
+  }
+  if ((await db.select({ id: campusExercises.id }).from(campusExercises).limit(1)).length === 0
+    || (await db.select().from(campusExercises)).length < REFERENCE_EXERCISES.length) {
+    await db.delete(campusExercises);
+    await db.insert(campusExercises).values(
+      REFERENCE_EXERCISES.map((item) => ({
+        name: item.name,
+        category: item.category,
+        objective: item.objective,
+        instructions: item.instructions,
+        durationSeconds: item.durationSeconds,
+        repetitions: item.repetitions,
+        frequency: item.frequency,
+        precautions: item.precautions,
+        isCustom: false,
+      })),
+    );
   }
   seeded = true;
 }
@@ -188,22 +208,28 @@ router.get("/dashboard/summary", async (_req, res): Promise<void> => {
   const clients = await db.select().from(campusClients).where(eq(campusClients.status, "active"));
   const sessions = await db.select().from(campusSessions);
   const programs = await db.select().from(campusPrograms).where(eq(campusPrograms.status, "active"));
-  const invoices = await db.select().from(campusInvoices).where(eq(campusInvoices.status, "overdue"));
   const notifications = await db.select().from(campusNotifications).where(eq(campusNotifications.read, false));
+  const invoices = await db.select().from(campusInvoices);
+  const overdueInvoices = invoices.filter((item) => item.status === "overdue");
   const startOfMonth = new Date();
   startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
   const upcoming = appointments.filter((item) => item.status !== "cancelled" && item.startsAt >= now()).sort((a, b) => a.startsAt.getTime() - b.startsAt.getTime())[0];
+  const completedAppointments = appointments.filter((item) => item.status === "completed" || item.status === "confirmed");
+  const attended = completedAppointments.length;
+  const cancelled = appointments.filter((item) => item.status === "cancelled").length;
+  const attendanceRate = attended + cancelled > 0 ? Math.round((attended / (attended + cancelled)) * 1000) / 10 : 0;
   const summary = {
     todayAppointments: appointments.filter((item) => item.startsAt.toDateString() === now().toDateString() && item.status !== "cancelled").length,
     nextAppointment: upcoming?.startsAt ?? null,
     activeClients: clients.length,
     monthlySessions: sessions.filter((item) => item.occurredAt >= startOfMonth).length,
-    monthlyRevenue: appointments.filter((item) => item.status === "completed").reduce((total, item) => total + Number(item.price), 0),
-    attendanceRate: 94,
+    monthlyRevenue: invoices.filter((item) => item.status === "paid" && new Date(item.issuedOn) >= startOfMonth).reduce((total, item) => total + Number(item.amount), 0),
+    attendanceRate,
     activePrograms: programs.length,
     unreadNotifications: notifications.length,
     programsToSend: (await db.select().from(campusPrograms).where(eq(campusPrograms.status, "draft"))).length,
-    invoicesDue: invoices.length,
+    invoicesDue: overdueInvoices.length,
   };
   res.json(GetDashboardSummaryResponse.parse(summary));
 });
@@ -236,9 +262,14 @@ router.get("/clients", async (req, res): Promise<void> => {
 });
 
 router.post("/clients", async (req, res): Promise<void> => {
+  await ensureSeeded();
   const parsed = CreateClientBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
-  const [client] = await db.insert(campusClients).values({ ...parsed.data, birthDate: parsed.data.birthDate?.toISOString().slice(0, 10) }).returning();
+  const { birthDate, ...rest } = parsed.data;
+  const client = await insertRow(campusClients, {
+    ...rest,
+    ...(birthDate ? { birthDate: birthDate.toISOString().slice(0, 10) } : {}),
+  });
   res.status(201).json(CreateClientResponse.parse(await clientStats(client)));
 });
 
@@ -259,16 +290,23 @@ router.patch("/clients/:id", async (req, res): Promise<void> => {
   const body = UpdateClientBody.safeParse(req.body);
   if (!params.success || !body.success) { res.status(400).json({ error: "Données client invalides" }); return; }
   const { birthDate, ...clientUpdate } = body.data;
-  const [client] = await db.update(campusClients).set({ ...clientUpdate, ...(birthDate ? { birthDate: birthDate.toISOString().slice(0, 10) } : {}) }).where(eq(campusClients.id, params.data.id)).returning();
-  if (!client) { res.status(404).json({ error: "Client introuvable" }); return; }
+  const client = await updateRow(campusClients, params.data.id, {
+    ...clientUpdate,
+    ...(birthDate ? { birthDate: birthDate.toISOString().slice(0, 10) } : {}),
+  });
   res.json(UpdateClientResponse.parse(await clientStats(client)));
 });
 
 router.delete("/clients/:id", async (req, res): Promise<void> => {
   const params = ArchiveClientParams.safeParse(req.params);
   if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
-  const [client] = await db.update(campusClients).set({ status: "archived" }).where(eq(campusClients.id, params.data.id)).returning();
-  if (!client) { res.status(404).json({ error: "Client introuvable" }); return; }
+  let client;
+  try {
+    client = await updateRow(campusClients, params.data.id, { status: "archived" });
+  } catch {
+    res.status(404).json({ error: "Client introuvable" });
+    return;
+  }
   res.sendStatus(204);
 });
 
@@ -286,7 +324,7 @@ router.get("/appointments", async (req, res): Promise<void> => {
 router.post("/appointments", async (req, res): Promise<void> => {
   const parsed = CreateAppointmentBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
-  const [appointment] = await db.insert(campusAppointments).values({ ...parsed.data, startsAt: new Date(parsed.data.startsAt), endsAt: new Date(parsed.data.endsAt), price: String(parsed.data.price ?? 65) }).returning();
+  const appointment = await insertRow(campusAppointments, { ...parsed.data, startsAt: new Date(parsed.data.startsAt), endsAt: new Date(parsed.data.endsAt), price: String(parsed.data.price ?? 65) });
   res.status(201).json(CreateAppointmentResponse.parse(appointmentOutput(appointment, await allClientNames())));
 });
 
@@ -296,16 +334,25 @@ router.patch("/appointments/:id", async (req, res): Promise<void> => {
   if (!params.success || !body.success) { res.status(400).json({ error: "Rendez-vous invalide" }); return; }
   const { price, startsAt, endsAt, ...appointmentUpdate } = body.data;
   const update = { ...appointmentUpdate, ...(startsAt ? { startsAt: new Date(startsAt) } : {}), ...(endsAt ? { endsAt: new Date(endsAt) } : {}), ...(price !== undefined ? { price: String(price) } : {}) };
-  const [appointment] = await db.update(campusAppointments).set(update).where(eq(campusAppointments.id, params.data.id)).returning();
-  if (!appointment) { res.status(404).json({ error: "Rendez-vous introuvable" }); return; }
+  let appointment;
+  try {
+    appointment = await updateRow(campusAppointments, params.data.id, update);
+  } catch {
+    res.status(404).json({ error: "Rendez-vous introuvable" });
+    return;
+  }
   res.json(UpdateAppointmentResponse.parse(appointmentOutput(appointment, await allClientNames())));
 });
 
 router.delete("/appointments/:id", async (req, res): Promise<void> => {
   const params = UpdateAppointmentParams.safeParse(req.params);
   if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
-  const [appointment] = await db.update(campusAppointments).set({ status: "cancelled" }).where(eq(campusAppointments.id, params.data.id)).returning();
-  if (!appointment) { res.status(404).json({ error: "Rendez-vous introuvable" }); return; }
+  try {
+    await updateRow(campusAppointments, params.data.id, { status: "cancelled" });
+  } catch {
+    res.status(404).json({ error: "Rendez-vous introuvable" });
+    return;
+  }
   res.sendStatus(204);
 });
 
@@ -322,7 +369,7 @@ router.get("/sessions", async (req, res): Promise<void> => {
 router.post("/sessions", async (req, res): Promise<void> => {
   const parsed = CreateSessionBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
-  const [session] = await db.insert(campusSessions).values({ ...parsed.data, occurredAt: new Date(parsed.data.occurredAt), zones: parsed.data.zones, techniques: parsed.data.techniques }).returning();
+  const session = await insertRow(campusSessions, { ...parsed.data, occurredAt: new Date(parsed.data.occurredAt), zones: parsed.data.zones, techniques: parsed.data.techniques });
   res.status(201).json(CreateSessionResponse.parse(sessionOutput(session, await allClientNames())));
 });
 
@@ -338,9 +385,26 @@ router.patch("/sessions/:id", async (req, res): Promise<void> => {
   const params = UpdateSessionParams.safeParse(req.params);
   const body = UpdateSessionBody.safeParse(req.body);
   if (!params.success || !body.success) { res.status(400).json({ error: "Séance invalide" }); return; }
-  const [session] = await db.update(campusSessions).set({ ...body.data, occurredAt: new Date(body.data.occurredAt) }).where(eq(campusSessions.id, params.data.id)).returning();
-  if (!session) { res.status(404).json({ error: "Séance introuvable" }); return; }
+  let session;
+  try {
+    session = await updateRow(campusSessions, params.data.id, { ...body.data, occurredAt: new Date(body.data.occurredAt) });
+  } catch {
+    res.status(404).json({ error: "Séance introuvable" });
+    return;
+  }
   res.json(UpdateSessionResponse.parse(sessionOutput(session, await allClientNames())));
+});
+
+router.delete("/sessions/:id", async (req, res): Promise<void> => {
+  const params = GetSessionParams.safeParse(req.params);
+  if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
+  try {
+    await deleteRow(campusSessions, params.data.id);
+  } catch {
+    res.status(404).json({ error: "Séance introuvable" });
+    return;
+  }
+  res.sendStatus(204);
 });
 
 router.get("/body-zones", async (_req, res): Promise<void> => {
@@ -362,7 +426,7 @@ router.get("/exercises", async (req, res): Promise<void> => {
 router.post("/exercises", async (req, res): Promise<void> => {
   const parsed = CreateExerciseBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
-  const [exercise] = await db.insert(campusExercises).values({ ...parsed.data, isCustom: true }).returning();
+  const exercise = await insertRow(campusExercises, { ...parsed.data, isCustom: true });
   res.status(201).json(CreateExerciseResponse.parse(exercise));
 });
 
@@ -370,16 +434,25 @@ router.patch("/exercises/:id", async (req, res): Promise<void> => {
   const params = UpdateExerciseParams.safeParse(req.params);
   const body = UpdateExerciseBody.safeParse(req.body);
   if (!params.success || !body.success) { res.status(400).json({ error: "Exercice invalide" }); return; }
-  const [exercise] = await db.update(campusExercises).set(body.data).where(eq(campusExercises.id, params.data.id)).returning();
-  if (!exercise) { res.status(404).json({ error: "Exercice introuvable" }); return; }
+  let exercise;
+  try {
+    exercise = await updateRow(campusExercises, params.data.id, body.data);
+  } catch {
+    res.status(404).json({ error: "Exercice introuvable" });
+    return;
+  }
   res.json(UpdateExerciseResponse.parse(exercise));
 });
 
 router.delete("/exercises/:id", async (req, res): Promise<void> => {
   const params = DeleteExerciseParams.safeParse(req.params);
   if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
-  const [exercise] = await db.delete(campusExercises).where(eq(campusExercises.id, params.data.id)).returning();
-  if (!exercise) { res.status(404).json({ error: "Exercice introuvable" }); return; }
+  try {
+    await deleteRow(campusExercises, params.data.id);
+  } catch {
+    res.status(404).json({ error: "Exercice introuvable" });
+    return;
+  }
   res.sendStatus(204);
 });
 
@@ -393,7 +466,7 @@ router.get("/programs", async (_req, res): Promise<void> => {
 router.post("/programs", async (req, res): Promise<void> => {
   const parsed = CreateProgramBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
-  const [program] = await db.insert(campusPrograms).values({ ...parsed.data, startsOn: parsed.data.startsOn.toISOString().slice(0, 10), endsOn: parsed.data.endsOn.toISOString().slice(0, 10) }).returning();
+  const program = await insertRow(campusPrograms, { ...parsed.data, startsOn: parsed.data.startsOn.toISOString().slice(0, 10), endsOn: parsed.data.endsOn.toISOString().slice(0, 10) });
   res.status(201).json(CreateProgramResponse.parse({ ...program, clientName: await clientName(program.clientId), completionRate: Number(program.completionRate), exercises: program.exercises as unknown[] }));
 });
 
@@ -402,8 +475,17 @@ router.patch("/programs/:id", async (req, res): Promise<void> => {
   const body = UpdateProgramBody.safeParse(req.body);
   if (!params.success || !body.success) { res.status(400).json({ error: "Programme invalide" }); return; }
   const { startsOn, endsOn, ...programUpdate } = body.data;
-  const [program] = await db.update(campusPrograms).set({ ...programUpdate, ...(startsOn ? { startsOn: startsOn.toISOString().slice(0, 10) } : {}), ...(endsOn ? { endsOn: endsOn.toISOString().slice(0, 10) } : {}) }).where(eq(campusPrograms.id, params.data.id)).returning();
-  if (!program) { res.status(404).json({ error: "Programme introuvable" }); return; }
+  let program;
+  try {
+    program = await updateRow(campusPrograms, params.data.id, {
+      ...programUpdate,
+      ...(startsOn ? { startsOn: startsOn.toISOString().slice(0, 10) } : {}),
+      ...(endsOn ? { endsOn: endsOn.toISOString().slice(0, 10) } : {}),
+    });
+  } catch {
+    res.status(404).json({ error: "Programme introuvable" });
+    return;
+  }
   res.json(UpdateProgramResponse.parse({ ...program, clientName: await clientName(program.clientId), completionRate: Number(program.completionRate), exercises: program.exercises as unknown[] }));
 });
 
@@ -416,8 +498,13 @@ router.get("/notifications", async (_req, res): Promise<void> => {
 router.post("/notifications/:id/read", async (req, res): Promise<void> => {
   const params = MarkNotificationReadParams.safeParse(req.params);
   if (!params.success) { res.status(400).json({ error: params.error.message }); return; }
-  const [notification] = await db.update(campusNotifications).set({ read: true }).where(eq(campusNotifications.id, params.data.id)).returning();
-  if (!notification) { res.status(404).json({ error: "Notification introuvable" }); return; }
+  let notification;
+  try {
+    notification = await updateRow(campusNotifications, params.data.id, { read: true });
+  } catch {
+    res.status(404).json({ error: "Notification introuvable" });
+    return;
+  }
   res.json(notification);
 });
 
@@ -431,7 +518,7 @@ router.get("/invoices", async (_req, res): Promise<void> => {
 router.post("/invoices", async (req, res): Promise<void> => {
   const parsed = CreateInvoiceBody.safeParse(req.body);
   if (!parsed.success) { res.status(400).json({ error: parsed.error.message }); return; }
-  const [invoice] = await db.insert(campusInvoices).values({ ...parsed.data, amount: String(parsed.data.amount), issuedOn: parsed.data.issuedOn.toISOString().slice(0, 10), number: `FAC-${new Date().getFullYear()}-${String(Date.now()).slice(-3)}` }).returning();
+  const invoice = await insertRow(campusInvoices, { ...parsed.data, amount: String(parsed.data.amount), issuedOn: parsed.data.issuedOn.toISOString().slice(0, 10), number: `FAC-${new Date().getFullYear()}-${String(Date.now()).slice(-3)}` });
   res.status(201).json(CreateInvoiceResponse.parse({ ...invoice, clientName: await clientName(invoice.clientId), amount: Number(invoice.amount) }));
 });
 
@@ -446,6 +533,18 @@ router.get("/anatomy/structures", async (req, res): Promise<void> => {
   let structures = await db.select().from(campusAnatomyStructures);
   if (query.data.search) structures = structures.filter((item) => `${item.name} ${item.region} ${item.type}`.toLowerCase().includes(query.data.search!.toLowerCase()));
   res.json(ListAnatomyStructuresResponse.parse(structures.map((item) => ({ ...item, tags: item.tags as string[] }))));
+});
+
+/** Dev / démo : vide clients, séances, RDV, factures, notifs, programmes (compte neuf). */
+router.post("/dev/reset-practice", async (_req, res): Promise<void> => {
+  await ensureSeeded();
+  await db.delete(campusSessions);
+  await db.delete(campusAppointments);
+  await db.delete(campusInvoices);
+  await db.delete(campusPrograms);
+  await db.delete(campusNotifications);
+  await db.delete(campusClients);
+  res.json({ ok: true });
 });
 
 export default router;
