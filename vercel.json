@@ -3,6 +3,6 @@
   "framework": "vite",
   "installCommand": "pnpm install --frozen-lockfile",
   "buildCommand": "pnpm --filter @workspace/api-client-react... --filter @workspace/campus run build",
-  "outputDirectory": "artifacts/campus/dist/public",
+  "outputDirectory": "artifacts/campus/dist",
   "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
