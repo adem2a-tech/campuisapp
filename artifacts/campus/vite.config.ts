@@ -6,7 +6,8 @@ import { defineConfig } from 'vite';
 import runtimeErrorOverlay from '@replit/vite-plugin-runtime-error-modal';
 import { oscarCampusProxy } from './vite.oscar-proxy';
 
-const rawPort = process.env.PORT;
+const isBuild = process.argv.includes('build');
+const rawPort = process.env.PORT || (isBuild ? '5173' : undefined);
 
 if (!rawPort) {
   throw new Error(
@@ -20,13 +21,7 @@ if (Number.isNaN(port) || port <= 0) {
   throw new Error(`Invalid PORT value: "${rawPort}"`);
 }
 
-const basePath = process.env.BASE_PATH;
-
-if (!basePath) {
-  throw new Error(
-    'BASE_PATH environment variable is required but was not provided.',
-  );
-}
+const basePath = process.env.BASE_PATH || '/';
 
 export default defineConfig({
   base: basePath,
@@ -79,6 +74,7 @@ export default defineConfig({
     },
     fs: {
       strict: true,
+      deny: ['**/.*'],
     },
   },
   preview: {
